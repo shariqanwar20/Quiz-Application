@@ -1,5 +1,5 @@
 import { Button, Typography } from '@material-ui/core';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import './App.css';
 import {QuestionCard} from './Components/QuestionCard';
 import { quizService } from './Services/quizService';
@@ -16,7 +16,6 @@ function App() {
   let [isGameStarted, setIsGameStarted] = useState(false);
   //display Score Page
   let [showResults, setShowResults] = useState(false);
-  let [isCorrect, setIsCorrect] = useState(false);
 
   const handleNext = (value:string) => {
     if (currentQuestion + 1 < quizData.length)
@@ -28,34 +27,25 @@ function App() {
     }
 
     if (value === quizData[currentQuestion].answer)
-    {
-      setIsCorrect(true)
       setScore(score + 1)
-    }
-    else
-    {
-      setIsCorrect(false)
-    }
   }
 
-  const startGame = () => {
+  const startGame = async () => {
     setShowResults(false)
     setIsGameStarted(true);
+    //Since we need to change the questions whenever a new game is Started so this can be an alternate way rather than useEffect
+    await fetchQuizData();
     setCurrentQuestion(0)
     setScore(0);
   }
+  async function fetchQuizData() {
+    //Since quizService is an async fucntion we have to  use await here
+    setIsLoading(true)
+    const quizQuestionsAndAnswers: QuestionData[] = await quizService(5, 'easy');
+    setQuizData(quizQuestionsAndAnswers)
+    setIsLoading(false)
+  }
 
-  //call the api function in useEffect
-  useEffect(() => {
-    async function fetchQuizData() {
-      //Since quizService is an async fucntion we have to  use await here
-      setIsLoading(true)
-      const quizQuestionsAndAnswers: QuestionData[] = await quizService(5, 'easy');
-      setQuizData(quizQuestionsAndAnswers)
-      setIsLoading(false)
-    }
-    fetchQuizData();
-  }, [])
   return (
     <div className='App'>
       <div className="header-div">
