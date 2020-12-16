@@ -84,7 +84,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = (props) => {
     else
     {
         return(
-            <Typography gutterBottom variant="h4">
+            <Typography gutterBottom variant="h4" style={{textAlign: 'center'}}>
                 Loading!!
             </Typography>
         )
